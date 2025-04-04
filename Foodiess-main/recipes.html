@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Collection | Foodies</title>
+    <style>
+        /* Base Styles */
+        :root {
+            --primary-color: #ff6f61;
+            --primary-dark: #e65c50;
+            --secondary-color: #ffa600;
+            --light-bg: #fff3e0;
+            --white: #ffffff;
+            --text-color: #333333;
+            --text-light: #666666;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding-top: 70px;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--primary-dark);
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo a {
+            color: var(--white);
+        }
+
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a {
+            color: var(--white);
+            font-size: 16px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+        }
+
+        /* Main Content */
+        .main-container {
+            padding: 40px 5%;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: clamp(28px, 4vw, 36px);
+            position: relative;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: var(--primary-color);
+        }
+
+        /* Category Navigation */
+        .category-nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .category-btn {
+            background-color: var(--white);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            padding: 8px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .category-btn:hover, .category-btn.active {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        /* Recipe Grid */
+        .recipe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .recipe-card {
+            background-color: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .recipe-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .recipe-content {
+            padding: 20px;
+        }
+
+        .recipe-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .recipe-desc {
+            color: var(--text-light);
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
+
+        .recipe-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        /* Recipe Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            max-width: 900px;
+            margin: 50px auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            color: var(--text-color);
+            cursor: pointer;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.8);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-header {
+            position: relative;
+        }
+
+        .modal-img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+        }
+
+        .modal-title {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 30px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+            color: var(--white);
+            font-size: clamp(24px, 4vw, 32px);
+        }
+
+        .modal-body {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        @media (min-width: 992px) {
+            .modal-body {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+
+        .recipe-instructions h3, .recipe-ingredients h3 {
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .recipe-instructions ol {
+            padding-left: 20px;
+        }
+
+        .recipe-instructions li {
+            margin-bottom: 15px;
+        }
+
+        .recipe-ingredients ul {
+            padding-left: 20px;
+        }
+
+        .recipe-ingredients li {
+            margin-bottom: 10px;
+        }
+
+        .recipe-info {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 30px 5%;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 20px;
+        }
+
+        .copyright {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+            }
+            
+            .nav-toggle {
+                display: block;
+            }
+            
+            nav {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: var(--primary-color);
+                flex-direction: column;
+                align-items: center;
+                padding: 20px 0;
+                gap: 15px;
+                transform: translateY(-100%);
+                transition: transform 0.3s ease;
+                z-index: 999;
+            }
+            
+            nav.active {
+                transform: translateY(0);
+            }
+            
+            .modal-img {
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .recipe-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-body {
+                padding: 20px;
+            }
+            
+            .recipe-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <a href="index.html">Foodies</a>
+        </div>
+        <button class="nav-toggle" aria-label="toggle navigation">☰</button>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="recipes.html">Recipes</a>
+            <a href="community.html">Community</a>
+        </nav>
+    </header>
+
+    <div class="main-container">
+        <h1 class="page-title">Recipe Collection</h1>
+        
+        <div class="category-nav">
+            <button class="category-btn active" data-category="all">All Recipes</button>
+            <button class="category-btn" data-category="breakfast">Breakfast</button>
+            <button class="category-btn" data-category="lunch">Lunch</button>
+            <button class="category-btn" data-category="dinner">Dinner</button>
+            <button class="category-btn" data-category="chinese">Chinese</button>
+            <button class="category-btn" data-category="mexican">Mexican</button>
+            <button class="category-btn" data-category="italian">Italian</button>
+            <button class="category-btn" data-category="seafood">Seafood</button>
+        </div>
+        
+        <div class="recipe-grid">
+            <!-- Breakfast Recipes -->
+            <div class="recipe-card" data-category="breakfast" data-recipe="pancakes">
+                <img src="https://images.unsplash.com/photo-1528207776546-365bb710ee93?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Fluffy Pancakes" class="recipe-img">
+                <div class="recipe-content">
+                    <h3 class="recipe-title">Fluffy Pancakes</h3>
+                    <p class="recipe-desc">Light and fluffy homemade pancakes perfect for a weekend breakfast.</p>
+                    <div class="recipe-meta">
+                        <span>⏱️ 20 mins</span>
+                        <span>🍽️ 4 servings</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="recipe-card" data-category="breakfast" data-recipe="avocado-toast">
+                <img src="https://static.vecteezy.com/system/resources/previews/023/901/890/non_2x/avocado-toast-on-a-white-plate-on-a-rustic-wooden-table-illustration-ai-generative-free-photo.jpg" alt="Avocado Toast" class="recipe-img">
+                <div class="recipe-content">
+                    <h3 class="recipe-title">Avocado Toast</h3>
+                    <p class="recipe-desc">Simple yet delicious avocado toast with various topping options.</p>
+                    <div class="recipe-meta">
+                        <span>⏱️ 10 mins</span>
+                        <span>🍽️ 2 servings</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lunch Recipes -->
+            <div class="recipe-card" data-category="lunch" data-recipe="caesar-salad">
+                <img src="https://images.unsplash.com/photo-1546793665-c74683f339c1?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Caesar Salad" class="recipe-img">
+                <div class="recipe-content">
+                    <h3 class="recipe-title">Classic Caesar Salad</h3>
+                    <p class="recipe-desc">Crisp romaine lettuce with homemade croutons and creamy dressing.</p>
+                    <div class="recipe-meta">
+                        <span>⏱️ 15 mins</span>
+                        <span>🍽️ 2 servings</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="recipe-card" data-category="lunch" data-recipe="quiche">
+                <img src="https://th.bing.com/th/id/OIP.PZE6L5Em5n-fms4bnwo5RQHaD4?rs=1&pid=ImgDetMain" alt="Spinach Quiche" class="recipe-img">
+                <div class="recipe-content">
+                    <h3 class="recipe-title">Spinach Quiche</h3>
+                    <p class="recipe-desc">Flaky crust filled with creamy spinach and cheese filling.</p>
+                    <div class="recipe-meta">
+                        <span>⏱️ 1 hour</span>
+                        <span>🍽️ 6 servings</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Dinner Recipes -->
+            <div class="recipe-card" data-category="dinner" data-recipe="spaghetti-carbonara">
+                <img src="https://th.bing.com/th/id/OIP.7nUhUPkodnX8_JzYX5-5LQHaE7?rs=1&pid=ImgDetMain" alt="Spaghetti Carbonara" class="recipe-img">
+                <div class="recipe-content">
+                    <h3 class="recipe-title">Spaghetti Carbonara</h3>
+                    <p class="recipe-desc">Classic Italian pasta with creamy egg sauce and pancetta.</p>
+                    <div class="recipe-meta">
+                        <span>⏱️ 30 mins</span>
+                        <span>🍽️ 4 servings</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="recipe-card" data-category="dinner" data-recipe="beef-stroganoff">
+                <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Beef Stroganoff" class="recipe-img">
+                <div class="recipe-content">
+                    <h3 class="recipe-title">Beef Stroganoff</h3>
+                    <p class="recipe-desc">Tender beef in a rich mushroom and sour cream sauce.</p>
+                    <div class="recipe-meta">
+                        <span>⏱️ 45 mins</span>
+                        <span>🍽️ 4 servings</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chinese Recipes -->
+            <div class="recipe-card" data-category="chinese" data-recipe="kung-pao-chicken">
+                <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Kung Pao Chicken" class="recipe-img">
+                <div class="recipe-content">
+                    <h3 class="recipe-title">Kung Pao Chicken</h3>
+                    <p class="recipe-desc">Spicy stir-fried chicken with peanuts and vegetables.</p>
+                    <div class="recipe-meta">
+                        <span>⏱️ 25 mins</span>
+                        <span>🍽️ 4 servings</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="recipe-card" data-category="chinese" data-recipe="dumplings">
+                <img src="https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Pork Dumplings" class="recipe-img">
+                <div class="recipe-content">
+                    <h3 class="recipe-title">Pork Dumplings</h3>
+                    <p class="recipe-desc">Homemade dumplings with flavorful pork filling.</p>
+                    <div class="recipe-meta">
+                        <span>⏱️ 1 hour</span>
+                        <span>🍽️ 6 servings</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mexican Recipes -->
+            <div class="recipe-card" data-category="mexican" data-recipe="tacos">
+                <img src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Beef Tacos" class="recipe-img">
+                <div class="recipe-content">
+                    <h3 class="recipe-title">Beef Tacos</h3>
+                    <p class="recipe-desc">Flavorful seasoned beef in crispy taco shells with toppings.</p>
+                    <div class="recipe-meta">
+                        <span>⏱️ 30 mins</span>
+                        <span>🍽️ 4 servings</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="recipe-card" data-category="mexican" data-recipe="enchiladas">
+                <img src="https://images.unsplash.com/photo-1574894709920-11b28e7367e3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Chicken Enchiladas" class="recipe-img">
+                <div class="recipe-content">
+                    <h3 class="recipe-title">Chicken Enchiladas</h3>
+                    <p class="recipe-desc">Tortillas filled with chicken and smothered in sauce.</p>
+                    <div class="recipe-meta">
+                        <span>⏱️ 50 mins</span>
+                        <span>🍽️ 6 servings</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Italian Recipes -->
+            <div class="recipe-card" data-category="italian" data-recipe="risotto">
+                <img src="https://th.bing.com/th/id/OIP.nB2djsTo0jPP0xBXQBjrcQHaHa?rs=1&pid=ImgDetMain" alt="Mushroom Risotto" class="recipe-img">
+                <div class="recipe-content">
+                    <h3 class="recipe-title">Mushroom Risotto</h3>
+                    <p class="recipe-desc">Creamy Italian rice dish with wild mushrooms.</p>
+                    <div class="recipe-meta">
+                        <span>⏱️ 40 mins</span>
+                        <span>🍽️ 4 servings</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="recipe-card" data-category="italian" data-recipe="tiramisu">
+                <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Tiramisu" class="recipe-img">
+                <div class="recipe-content">
+                    <h3 class="recipe-title">Tiramisu</h3>
+                    <p class="recipe-desc">Classic Italian dessert with coffee-soaked ladyfingers.</p>
+                    <div class="recipe-meta">
+                        <span>⏱️ 30 mins + chilling</span>
+                        <span>🍽️ 8 servings</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Seafood Recipes -->
+            <div class="recipe-card" data-category="seafood" data-recipe="salmon">
+                <img src="https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Grilled Salmon" class="recipe-img">
+                <div class="recipe-content">
+                    <h3 class="recipe-title">Grilled Salmon</h3>
+                    <p class="recipe-desc">Perfectly grilled salmon with lemon butter sauce.</p>
+                    <div class="recipe-meta">
+                        <span>⏱️ 20 mins</span>
+                        <span>🍽️ 2 servings</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="recipe-card" data-category="seafood" data-recipe="shrimp-scampi">
+                <img src="https://img.freepik.com/premium-photo/irresistible-shrimp-scampi-bliss-isolated-transparent-background_1002329-5292.jpg" alt="Shrimp Scampi" class="recipe-img">
+                <div class="recipe-content">
+                    <h3 class="recipe-title">Shrimp Scampi</h3>
+                    <p class="recipe-desc">Garlic butter shrimp with pasta in white wine sauce.</p>
+                    <div class="recipe-meta">
+                        <span>⏱️ 25 mins</span>
+                        <span>🍽️ 4 servings</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recipe Modals -->
+    <!-- Spaghetti Carbonara Modal -->
+    <div id="spaghetti-carbonara-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <img src="https://th.bing.com/th/id/OIP.7nUhUPkodnX8_JzYX5-5LQHaE7?rs=1&pid=ImgDetMain" alt="Spaghetti Carbonara" class="modal-img">
+                <h2 class="modal-title">Spaghetti Carbonara</h2>
+            </div>
+            <div class="modal-body">
+                <div class="recipe-instructions">
+                    <div class="recipe-info">
+                        <div class="info-item">
+                            <span>⏱️</span>
+                            <span>30 mins</span>
+                        </div>
+                        <div class="info-item">
+                            <span>🍽️</span>
+                            <span>4 servings</span>
+                        </div>
+                        <div class="info-item">
+                            <span>⭐</span>
+                            <span>Difficulty: Medium</span>
+                        </div>
+                    </div>
+                    <h3>Instructions</h3>
+                    <ol>
+                        <li>Bring a large pot of salted water to boil and cook the spaghetti according to package instructions until al dente.</li>
+                        <li>While the pasta cooks, heat a large skillet over medium heat. Add the diced pancetta or guanciale and cook until crispy, about 5-7 minutes. Remove from heat and set aside, leaving the fat in the pan.</li>
+                        <li>In a medium bowl, whisk together the eggs, grated Pecorino Romano, and black pepper until well combined.</li>
+                        <li>When the pasta is done, reserve 1 cup of the pasta water, then drain the pasta.</li>
+                        <li>Working quickly, add the hot pasta to the skillet with the pancetta fat. Toss to coat the pasta in the fat.</li>
+                        <li>Remove the skillet from heat and immediately pour in the egg mixture, tossing constantly to coat the pasta. The residual heat will cook the eggs into a creamy sauce.</li>
+                        <li>If the sauce seems too thick, add a splash of the reserved pasta water to loosen it.</li>
+                        <li>Stir in the crispy pancetta and serve immediately with extra grated cheese and black pepper.</li>
+                    </ol>
+                    <h3>Chef's Tips</h3>
+                    <ul>
+                        <li>Use the highest quality eggs you can find since they're a main component of the sauce.</li>
+                        <li>Traditional carbonara uses guanciale (cured pork cheek), but pancetta or even bacon can be substituted.</li>
+                        <li>The key to perfect carbonara is timing - have all your ingredients prepped before you start cooking.</li>
+                        <li>Never add cream to carbonara - the creaminess comes from the emulsified eggs and cheese.</li>
+                    </ul>
+                </div>
+                <div class="recipe-ingredients">
+                    <h3>Ingredients</h3>
+                    <ul>
+                        <li>400g spaghetti</li>
+                        <li>200g pancetta or guanciale, diced</li>
+                        <li>4 large eggs</li>
+                        <li>100g Pecorino Romano, grated</li>
+                        <li>50g Parmigiano Reggiano, grated</li>
+                        <li>Freshly ground black pepper</li>
+                        <li>Salt for pasta water</li>
+                    </ul>
+                    <h3>Nutrition Info</h3>
+                    <p>Per serving:</p>
+                    <ul>
+                        <li>Calories: 650</li>
+                        <li>Carbs: 75g</li>
+                        <li>Protein: 30g</li>
+                        <li>Fat: 25g</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Beef Tacos Modal -->
+    <div id="tacos-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <img src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Beef Tacos" class="modal-img">
+                <h2 class="modal-title">Beef Tacos</h2>
+            </div>
+            <div class="modal-body">
+                <div class="recipe-instructions">
+                    <div class="recipe-info">
+                        <div class="info-item">
+                            <span>⏱️</span>
+                            <span>30 mins</span>
+                        </div>
+                        <div class="info-item">
+                            <span>🍽️</span>
+                            <span>4 servings</span>
+                        </div>
+                        <div class="info-item">
+                            <span>⭐</span>
+                            <span>Difficulty: Easy</span>
+                        </div>
+                    </div>
+                    <h3>Instructions</h3>
+                    <ol>
+                        <li>Heat a large skillet over medium-high heat. Add the ground beef and cook until browned, breaking it up with a spoon as it cooks.</li>
+                        <li>Drain excess fat from the beef, then return to the heat. Add the taco seasoning and water, stirring to combine. Simmer for 5 minutes until thickened.</li>
+                        <li>While the beef cooks, prepare your taco toppings: shred the lettuce, dice the tomatoes, slice the avocado, and crumble the cheese.</li>
+                        <li>Warm the taco shells according to package directions (usually in the oven or microwave).</li>
+                        <li>Assemble the tacos by filling each shell with the seasoned beef, then adding your desired toppings.</li>
+                        <li>Serve immediately with lime wedges and your favorite hot sauce.</li>
+                    </ol>
+                    <h3>Chef's Tips</h3>
+                    <ul>
+                        <li>For extra flavor, toast your taco shells in a dry skillet for 30 seconds per side.</li>
+                        <li>Make it vegetarian by substituting the beef with black beans or lentils.</li>
+                        <li>For a healthier option, use lettuce leaves instead of taco shells.</li>
+                        <li>The beef mixture can be made ahead and reheated when ready to serve.</li>
+                    </ul>
+                </div>
+                <div class="recipe-ingredients">
+                    <h3>Ingredients</h3>
+                    <ul>
+                        <li>1 lb ground beef (85% lean)</li>
+                        <li>1 packet taco seasoning (or homemade blend)</li>
+                        <li>1/2 cup water</li>
+                        <li>12 taco shells (hard or soft)</li>
+                        <li>2 cups shredded lettuce</li>
+                        <li>1 large tomato, diced</li>
+                        <li>1 avocado, sliced</li>
+                        <li>1/2 cup shredded cheddar cheese</li>
+                        <li>1/4 cup sour cream</li>
+                        <li>1/4 cup salsa</li>
+                        <li>Lime wedges for serving</li>
+                    </ul>
+                    <h3>Nutrition Info</h3>
+                    <p>Per serving (3 tacos):</p>
+                    <ul>
+                        <li>Calories: 520</li>
+                        <li>Carbs: 35g</li>
+                        <li>Protein: 28g</li>
+                        <li>Fat: 30g</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pancakes Modal -->
+    <div id="pancakes-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <img src="https://images.unsplash.com/photo-1528207776546-365bb710ee93?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Fluffy Pancakes" class="modal-img">
+                <h2 class="modal-title">Fluffy Pancakes</h2>
+            </div>
+            <div class="modal-body">
+                <div class="recipe-instructions">
+                    <div class="recipe-info">
+                        <div class="info-item">
+                            <span>⏱️</span>
+                            <span>20 mins</span>
+                        </div>
+                        <div class="info-item">
+                            <span>🍽️</span>
+                            <span>4 servings</span>
+                        </div>
+                        <div class="info-item">
+                            <span>⭐</span>
+                            <span>Difficulty: Easy</span>
+                        </div>
+                    </div>
+                    <h3>Instructions</h3>
+                    <ol>
+                        <li>In a large bowl, whisk together the flour, sugar, baking powder, and salt.</li>
+                        <li>In another bowl, beat the egg, then add the milk, melted butter, and vanilla.</li>
+                        <li>Pour the wet ingredients into the dry ingredients and stir until just combined (a few lumps are okay).</li>
+                        <li>Heat a griddle or large skillet over medium heat and lightly grease with butter or oil.</li>
+                        <li>Pour 1/4 cup of batter for each pancake onto the griddle.</li>
+                        <li>Cook until bubbles form on the surface and edges look set, about 2-3 minutes.</li>
+                        <li>Flip and cook until golden brown on the other side, about 1-2 minutes more.</li>
+                        <li>Serve warm with maple syrup and butter.</li>
+                    </ol>
+                    <h3>Chef's Tips</h3>
+                    <ul>
+                        <li>Don't overmix the batter - this makes pancakes tough.</li>
+                        <li>Let the batter rest for 5-10 minutes for fluffier pancakes.</li>
+                        <li>For blueberry pancakes, add fresh blueberries to the batter after pouring onto the griddle.</li>
+                        <li>Keep cooked pancakes warm in a 200°F oven while cooking the rest.</li>
+                    </ul>
+                </div>
+                <div class="recipe-ingredients">
+                    <h3>Ingredients</h3>
+                    <ul>
+                        <li>1 1/2 cups all-purpose flour</li>
+                        <li>3 1/2 tsp baking powder</li>
+                        <li>1 tbsp sugar</li>
+                        <li>1/4 tsp salt</li>
+                        <li>1 1/4 cups milk</li>
+                        <li>1 egg</li>
+                        <li>3 tbsp melted butter</li>
+                        <li>1 tsp vanilla extract</li>
+                        <li>Maple syrup and butter for serving</li>
+                    </ul>
+                    <h3>Nutrition Info</h3>
+                    <p>Per serving (3 pancakes):</p>
+                    <ul>
+                        <li>Calories: 320</li>
+                        <li>Carbs: 45g</li>
+                        <li>Protein: 8g</li>
+                        <li>Fat: 12g</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Avocado Toast Modal -->
+    <div id="avocado-toast-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <img src="https://static.vecteezy.com/system/resources/previews/023/901/890/non_2x/avocado-toast-on-a-white-plate-on-a-rustic-wooden-table-illustration-ai-generative-free-photo.jpg" alt="Avocado Toast" class="modal-img">
+                <h2 class="modal-title">Avocado Toast</h2>
+            </div>
+            <div class="modal-body">
+                <div class="recipe-instructions">
+                    <div class="recipe-info">
+                        <div class="info-item">
+                            <span>⏱️</span>
+                            <span>10 mins</span>
+                        </div>
+                        <div class="info-item">
+                            <span>🍽️</span>
+                            <span>2 servings</span>
+                        </div>
+                        <div class="info-item">
+                            <span>⭐</span>
+                            <span>Difficulty: Easy</span>
+                        </div>
+                    </div>
+                    <h3>Instructions</h3>
+                    <ol>
+                        <li>Toast the bread until golden and crisp.</li>
+                        <li>Cut the avocado in half, remove the pit, and scoop the flesh into a bowl.</li>
+                        <li>Mash the avocado with a fork to your desired consistency (chunky or smooth).</li>
+                        <li>Season with salt, pepper, and a squeeze of lemon juice.</li>
+                        <li>Spread the mashed avocado evenly on the toast.</li>
+                        <li>Top with your choice of additional toppings (see suggestions below).</li>
+                        <li>Serve immediately.</li>
+                    </ol>
+                    <h3>Chef's Tips</h3>
+                    <ul>
+                        <li>Use ripe but firm avocados for best texture.</li>
+                        <li>Try different bread types like sourdough, whole grain, or rye.</li>
+                        <li>Popular toppings: poached eggs, cherry tomatoes, feta cheese, red pepper flakes, microgreens.</li>
+                        <li>For extra flavor, drizzle with olive oil or balsamic glaze.</li>
+                    </ul>
+                </div>
+                <div class="recipe-ingredients">
+                    <h3>Ingredients</h3>
+                    <ul>
+                        <li>2 slices of bread (your choice)</li>
+                        <li>1 ripe avocado</li>
+                        <li>1/2 lemon, juiced</li>
+                        <li>Salt and pepper to taste</li>
+                        <li>Optional toppings: cherry tomatoes, feta cheese, poached eggs, red pepper flakes</li>
+                    </ul>
+                    <h3>Nutrition Info</h3>
+                    <p>Per serving (basic recipe):</p>
+                    <ul>
+                        <li>Calories: 220</li>
+                        <li>Carbs: 20g</li>
+                        <li>Protein: 5g</li>
+                        <li>Fat: 15g</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Caesar Salad Modal -->
+    <div id="caesar-salad-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <img src="https://images.unsplash.com/photo-1546793665-c74683f339c1?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Caesar Salad" class="modal-img">
+                <h2 class="modal-title">Classic Caesar Salad</h2>
+            </div>
+            <div class="modal-body">
+                <div class="recipe-instructions">
+                    <div class="recipe-info">
+                        <div class="info-item">
+                            <span>⏱️</span>
+                            <span>15 mins</span>
+                        </div>
+                        <div class="info-item">
+                            <span>🍽️</span>
+                            <span>2 servings</span>
+                        </div>
+                        <div class="info-item">
+                            <span>⭐</span>
+                            <span>Difficulty: Medium</span>
+                        </div>
+                    </div>
+                    <h3>Instructions</h3>
+                    <ol>
+                        <li>For the croutons: Preheat oven to 375°F. Toss bread cubes with olive oil, garlic powder, and salt. Spread on a baking sheet and bake for 10-12 minutes until golden and crisp.</li>
+                        <li>For the dressing: In a blender, combine garlic, anchovies, egg yolk, Dijon, Worcestershire, lemon juice, and Parmesan. Blend until smooth.</li>
+                        <li>With blender running, slowly drizzle in olive oil until emulsified. Season with salt and pepper.</li>
+                        <li>In a large bowl, toss romaine lettuce with dressing to coat (you may not need all the dressing).</li>
+                        <li>Add croutons and toss gently.</li>
+                        <li>Serve immediately with extra Parmesan and freshly ground black pepper.</li>
+                    </ol>
+                    <h3>Chef's Tips</h3>
+                    <ul>
+                        <li>Use day-old bread for best crouton texture.</li>
+                        <li>For a vegetarian version, omit the anchovies.</li>
+                        <li>Add grilled chicken or shrimp to make it a main course.</li>
+                        <li>Dressing can be made ahead and stored in the fridge for 3 days.</li>
+                    </ul>
+                </div>
+                <div class="recipe-ingredients">
+                    <h3>Ingredients</h3>
+                    <ul>
+                        <li>1 large head romaine lettuce, chopped</li>
+                        <li>2 cups bread cubes (French or Italian bread)</li>
+                        <li>2 tbsp olive oil</li>
+                        <li>1/4 tsp garlic powder</li>
+                        <li>1/4 cup grated Parmesan cheese</li>
+                        <h4>For the dressing:</h4>
+                        <li>2 garlic cloves</li>
+                        <li>3 anchovy fillets</li>
+                        <li>1 egg yolk</li>
+                        <li>1 tsp Dijon mustard</li>
+                        <li>1 tsp Worcestershire sauce</li>
+                        <li>2 tbsp lemon juice</li>
+                        <li>1/4 cup grated Parmesan</li>
+                        <li>1/2 cup olive oil</li>
+                        <li>Salt and pepper to taste</li>
+                    </ul>
+                    <h3>Nutrition Info</h3>
+                    <p>Per serving:</p>
+                    <ul>
+                        <li>Calories: 420</li>
+                        <li>Carbs: 25g</li>
+                        <li>Protein: 12g</li>
+                        <li>Fat: 32g</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Spinach Quiche Modal -->
+    <div id="quiche-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <img src="https://th.bing.com/th/id/OIP.PZE6L5Em5n-fms4bnwo5RQHaD4?rs=1&pid=ImgDetMain" alt="Spinach Quiche" class="modal-img">
+                <h2 class="modal-title">Spinach Quiche</h2>
+            </div>
+            <div class="modal-body">
+                <div class="recipe-instructions">
+                    <div class="recipe-info">
+                        <div class="info-item">
+                            <span>⏱️</span>
+                            <span>1 hour</span>
+                        </div>
+                        <div class="info-item">
+                            <span>🍽️</span>
+                            <span>6 servings</span>
+                        </div>
+                        <div class="info-item">
+                            <span>⭐</span>
+                            <span>Difficulty: Medium</span>
+                        </div>
+                    </div>
+                    <h3>Instructions</h3>
+                    <ol>
+                        <li>Preheat oven to 375°F. Roll out pie crust and fit into a 9-inch pie dish. Crimp edges and prick bottom with a fork. Line with parchment and pie weights or dried beans.</li>
+                        <li>Blind bake for 15 minutes. Remove weights and parchment and bake 5 more minutes until lightly golden. Let cool slightly.</li>
+                        <li>In a skillet, heat olive oil over medium heat. Add onion and cook until soft, about 5 minutes. Add spinach and cook until wilted, about 2 minutes. Remove from heat.</li>
+                        <li>In a bowl, whisk together eggs, cream, salt, pepper, and nutmeg.</li>
+                        <li>Sprinkle half the cheese over the crust. Spread spinach mixture evenly over cheese. Pour egg mixture over top. Sprinkle with remaining cheese.</li>
+                        <li>Bake for 35-40 minutes until center is set and top is golden brown.</li>
+                        <li>Let cool for 10 minutes before slicing and serving.</li>
+                    </ol>
+                    <h3>Chef's Tips</h3>
+                    <ul>
+                        <li>Use frozen spinach (thawed and squeezed dry) for convenience.</li>
+                        <li>Add cooked bacon or mushrooms for extra flavor.</li>
+                        <li>Quiche can be made ahead and reheated in a 300°F oven for 15 minutes.</li>
+                        <li>For a gluten-free version, use a potato crust or crustless.</li>
+                    </ul>
+                </div>
+                <div class="recipe-ingredients">
+                    <h3>Ingredients</h3>
+                    <ul>
+                        <li>1 pie crust (homemade or store-bought)</li>
+                        <li>1 tbsp olive oil</li>
+                        <li>1 small onion, diced</li>
+                        <li>10 oz fresh spinach, chopped</li>
+                        <li>4 large eggs</li>
+                        <li>1 cup heavy cream</li>
+                        <li>1/2 tsp salt</li>
+                        <li>1/4 tsp black pepper</li>
+                        <li>1/8 tsp nutmeg</li>
+                        <li>1 1/2 cups shredded Swiss cheese</li>
+                    </ul>
+                    <h3>Nutrition Info</h3>
+                    <p>Per serving:</p>
+                    <ul>
+                        <li>Calories: 380</li>
+                        <li>Carbs: 18g</li>
+                        <li>Protein: 14g</li>
+                        <li>Fat: 29g</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Beef Stroganoff Modal -->
+    <div id="beef-stroganoff-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Beef Stroganoff" class="modal-img">
+                <h2 class="modal-title">Beef Stroganoff</h2>
+            </div>
+            <div class="modal-body">
+                <div class="recipe-instructions">
+                    <div class="recipe-info">
+                        <div class="info-item">
+                            <span>⏱️</span>
+                            <span>45 mins</span>
+                        </div>
+                        <div class="info-item">
+                            <span>🍽️</span>
+                            <span>4 servings</span>
+                        </div>
+                        <div class="info-item">
+                            <span>⭐</span>
+                            <span>Difficulty: Medium</span>
+                        </div>
+                    </div>
+                    <h3>Instructions</h3>
+                    <ol>
+                        <li>Season beef with salt and pepper. In a large skillet, heat 1 tbsp oil over high heat. Sear beef in batches until browned, about 2 minutes per side. Remove and set aside.</li>
+                        <li>In same skillet, melt butter over medium heat. Add mushrooms and onions, cook until softened, about 5 minutes.</li>
+                        <li>Add garlic and cook 1 minute until fragrant. Sprinkle flour over vegetables and stir to coat.</li>
+                        <li>Slowly whisk in beef broth, then Worcestershire sauce and Dijon mustard. Bring to a simmer.</li>
+                        <li>Return beef and any juices to the skillet. Reduce heat to low, cover and simmer for 20 minutes until beef is tender.</li>
+                        <li>Stir in sour cream and heat through (do not boil). Season with salt and pepper to taste.</li>
+                        <li>Serve over egg noodles or mashed potatoes, garnished with parsley.</li>
+                    </ol>
+                    <h3>Chef's Tips</h3>
+                    <ul>
+                        <li>Use tender cuts like sirloin or tenderloin for best results.</li>
+                        <li>For extra richness, stir in 2 tbsp cream cheese with the sour cream.</li>
+                        <li>Make ahead tip: Prepare through step 5, then refrigerate. Reheat and add sour cream just before serving.</li>
+                        <li>For a lighter version, use Greek yogurt instead of sour cream.</li>
+                    </ul>
+                </div>
+                <div class="recipe-ingredients">
+                    <h3>Ingredients</h3>
+                    <ul>
+                        <li>1 1/2 lbs beef sirloin, thinly sliced</li>
+                        <li>Salt and pepper to taste</li>
+                        <li>2 tbsp olive oil, divided</li>
+                        <li>2 tbsp butter</li>
+                        <li>8 oz mushrooms, sliced</li>
+                        <li>1 small onion, thinly sliced</li>
+                        <li>2 garlic cloves, minced</li>
+                        <li>2 tbsp all-purpose flour</li>
+                        <li>2 cups beef broth</li>
+                        <li>1 tbsp Worcestershire sauce</li>
+                        <li>1 tsp Dijon mustard</li>
+                        <li>1/2 cup sour cream</li>
+                        <li>Chopped parsley for garnish</li>
+                        <li>Egg noodles or mashed potatoes for serving</li>
+                    </ul>
+                    <h3>Nutrition Info</h3>
+                    <p>Per serving (without noodles):</p>
+                    <ul>
+                        <li>Calories: 480</li>
+                        <li>Carbs: 12g</li>
+                        <li>Protein: 38g</li>
+                        <li>Fat: 32g</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kung Pao Chicken Modal -->
+    <div id="kung-pao-chicken-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Kung Pao Chicken" class="modal-img">
+                <h2 class="modal-title">Kung Pao Chicken</h2>
+            </div>
+            <div class="modal-body">
+                <div class="recipe-instructions">
+                    <div class="recipe-info">
+                        <div class="info-item">
+                            <span>⏱️</span>
+                            <span>25 mins</span>
+                        </div>
+                        <div class="info-item">
+                            <span>🍽️</span>
+                            <span>4 servings</span>
+                        </div>
+                        <div class="info-item">
+                            <span>⭐</span>
+                            <span>Difficulty: Medium</span>
+                        </div>
+                    </div>
+                    <h3>Instructions</h3>
+                    <ol>
+                        <li>In a bowl, combine chicken with cornstarch, soy sauce, and rice wine. Let marinate for 10 minutes.</li>
+                        <li>Meanwhile, make the sauce: whisk together soy sauce, vinegar, sugar, and cornstarch in a small bowl.</li>
+                        <li>Heat oil in a wok or large skillet over high heat. Add chicken and stir-fry until no longer pink, about 3-4 minutes. Remove and set aside.</li>
+                        <li>Add a bit more oil if needed, then stir-fry garlic, ginger, and dried chilies for 30 seconds until fragrant.</li>
+                        <li>Add bell peppers and stir-fry for 2 minutes until slightly softened.</li>
+                        <li>Return chicken to the wok. Stir the sauce mixture and pour over chicken. Cook until sauce thickens, about 1-2 minutes.</li>
+                        <li>Stir in peanuts and green onions. Remove from heat.</li>
+                        <li>Serve hot over steamed rice.</li>
+                    </ol>
+                    <h3>Chef's Tips</h3>
+                    <ul>
+                        <li>Adjust the number of dried chilies to control the heat level.</li>
+                        <li>For extra crunch, add vegetables like zucchini or water chestnuts.</li>
+                        <li>Use cashews instead of peanuts for a variation.</li>
+                        <li>Make it vegetarian by substituting chicken with tofu or mushrooms.</li>
+                    </ul>
+                </div>
+                <div class="recipe-ingredients">
+                    <h3>Ingredients</h3>
+                    <ul>
+                        <li>1 1/2 lbs boneless chicken thighs, cubed</li>
+                        <li>1 tbsp cornstarch</li>
+                        <li>1 tbsp soy sauce</li>
+                        <li>1 tbsp rice wine or sherry</li>
+                        <li>2 tbsp vegetable oil</li>
+                        <li>3 garlic cloves, minced</li>
+                        <li>1 tbsp grated ginger</li>
+                        <li>8-10 dried red chilies</li>
+                        <li>1 red bell pepper, diced</li>
+                        <li>1/2 cup roasted peanuts</li>
+                        <li>3 green onions, sliced</li>
+                        <h4>For the sauce:</h4>
+                        <li>2 tbsp soy sauce</li>
+                        <li>1 tbsp rice vinegar</li>
+                        <li>1 tbsp sugar</li>
+                        <li>1 tsp cornstarch</li>
+                        <li>2 tbsp water</li>
+                        <li>Steamed rice for serving</li>
+                    </ul>
+                    <h3>Nutrition Info</h3>
+                    <p>Per serving (without rice):</p>
+                    <ul>
+                        <li>Calories: 380</li>
+                        <li>Carbs: 15g</li>
+                        <li>Protein: 35g</li>
+                        <li>Fat: 21g</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pork Dumplings Modal -->
+    <div id="dumplings-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <img src="https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Pork Dumplings" class="modal-img">
+                <h2 class="modal-title">Pork Dumplings</h2>
+            </div>
+            <div class="modal-body">
+                <div class="recipe-instructions">
+                    <div class="recipe-info">
+                        <div class="info-item">
+                            <span>⏱️</span>
+                            <span>1 hour</span>
+                        </div>
+                        <div class="info-item">
+                            <span>🍽️</span>
+                            <span>6 servings</span>
+                        </div>
+                        <div class="info-item">
+                            <span>⭐</span>
+                            <span>Difficulty: Medium</span>
+                        </div>
+                    </div>
+                    <h3>Instructions</h3>
+                    <ol>
+                        <li>In a large bowl, combine pork, cabbage, green onions, garlic, ginger, soy sauce, sesame oil, and egg. Mix well.</li>
+                        <li>Place a dumpling wrapper on a clean surface. Spoon about 1 tablespoon of filling into the center.</li>
+                        <li>Moisten the edges with water. Fold in half and pleat the edges to seal. Repeat with remaining wrappers and filling.</li>
+                        <li>To pan-fry: Heat oil in a large skillet over medium-high heat. Add dumplings in a single layer and cook until bottoms are golden, about 2-3 minutes.</li>
+                        <li>Add 1/4 cup water to the skillet, cover immediately, and steam for 5-6 minutes until water evaporates.</li>
+                        <li>Remove lid and cook another minute until bottoms are crisp.</li>
+                        <li>Serve hot with dipping sauce.</li>
+                    </ol>
+                    <h3>Chef's Tips</h3>
+                    <ul>
+                        <li>Make extra and freeze uncooked dumplings on a baking sheet before transferring to a freezer bag.</li>
+                        <li>For a shortcut, use store-bought wonton wrappers.</li>
+                        <li>Try different fillings like shrimp, chicken, or vegetarian options.</li>
+                        <li>For steamed dumplings, place in a steamer basket lined with cabbage leaves and steam for 8-10 minutes.</li>
+                    </ul>
+                </div>
+                <div class="recipe-ingredients">
+                    <h3>Ingredients</h3>
+                    <ul>
+                        <li>1 lb ground pork</li>
+                        <li>2 cups finely chopped cabbage</li>
+                        <li>3 green onions, finely chopped</li>
+                        <li>2 garlic cloves, minced</li>
+                        <li>1 tbsp grated ginger</li>
+                        <li>2 tbsp soy sauce</li>
+                        <li>1 tbsp sesame oil</li>
+                        <li>1 egg</li>
+                        <li>1 package round dumpling wrappers (about 50)</li>
+                        <li>2 tbsp vegetable oil for frying</li>
+                        <h4>For dipping sauce:</h4>
+                        <li>1/4 cup soy sauce</li>
+                        <li>2 tbsp rice vinegar</li>
+                        <li>1 tsp sesame oil</li>
+                        <li>1 tsp chili oil (optional)</li>
+                        <li>1 tsp sugar</li>
+                    </ul>
+                    <h3>Nutrition Info</h3>
+                    <p>Per serving (about 8 dumplings):</p>
+                    <ul>
+                        <li>Calories: 320</li>
+                        <li>Carbs: 30g</li>
+                        <li>Protein: 18g</li>
+                        <li>Fat: 14g</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chicken Enchiladas Modal -->
+    <div id="enchiladas-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <img src="https://images.unsplash.com/photo-1574894709920-11b28e7367e3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Chicken Enchiladas" class="modal-img">
+                <h2 class="modal-title">Chicken Enchiladas</h2>
+            </div>
+            <div class="modal-body">
+                <div class="recipe-instructions">
+                    <div class="recipe-info">
+                        <div class="info-item">
+                            <span>⏱️</span>
+                            <span>50 mins</span>
+                        </div>
+                        <div class="info-item">
+                            <span>🍽️</span>
+                            <span>6 servings</span>
+                        </div>
+                        <div class="info-item">
+                            <span>⭐</span>
+                            <span>Difficulty: Medium</span>
+                        </div>
+                    </div>
+                    <h3>Instructions</h3>
+                    <ol>
+                        <li>Preheat oven to 375°F. Heat oil in a skillet over medium heat. Add onion and cook until soft, about 5 minutes.</li>
+                        <li>Add garlic and cook 1 minute until fragrant. Stir in chicken, cumin, chili powder, and salt. Cook 2 minutes.</li>
+                        <li>Remove from heat and stir in 1 cup cheese and cilantro.</li>
+                        <li>Spread 1/2 cup enchilada sauce in bottom of a 9x13 baking dish.</li>
+                        <li>Warm tortillas briefly to make pliable. Spoon about 1/3 cup chicken mixture down center of each tortilla. Roll up and place seam-side down in baking dish.</li>
+                        <li>Pour remaining sauce over enchiladas and sprinkle with remaining cheese.</li>
+                        <li>Bake uncovered for 20-25 minutes until bubbly and cheese is melted.</li>
+                        <li>Let stand 5 minutes before serving. Garnish with toppings as desired.</li>
+                    </ol>
+                    <h3>Chef's Tips</h3>
+                    <ul>
+                        <li>Use rotisserie chicken for a shortcut.</li>
+                        <li>For extra flavor, add black beans or corn to the filling.</li>
+                        <li>Make ahead by assembling up to step 6, then refrigerate. Add 10 minutes to baking time.</li>
+                        <li>For spicier enchiladas, use hot enchilada sauce or add diced jalapeños to filling.</li>
+                    </ul>
+                </div>
+                <div class="recipe-ingredients">
+                    <h3>Ingredients</h3>
+                    <ul>
+                        <li>2 tbsp vegetable oil</li>
+                        <li>1 medium onion, diced</li>
+                        <li>2 garlic cloves, minced</li>
+                        <li>3 cups cooked, shredded chicken</li>
+                        <li>1 tsp ground cumin</li>
+                        <li>1 tsp chili powder</li>
+                        <li>1/2 tsp salt</li>
+                        <li>2 cups shredded Monterey Jack or cheddar cheese</li>
+                        <li>1/4 cup chopped cilantro</li>
+                        <li>12 corn tortillas</li>
+                        <li>3 cups enchilada sauce (red or green)</li>
+                        <h4>For serving (optional):</h4>
+                        <li>Sour cream</li>
+                        <li>Diced avocado</li>
+                        <li>Sliced radishes</li>
+                        <li>Lime wedges</li>
+                    </ul>
+                    <h3>Nutrition Info</h3>
+                    <p>Per serving (2 enchiladas):</p>
+                    <ul>
+                        <li>Calories: 480</li>
+                        <li>Carbs: 35g</li>
+                        <li>Protein: 32g</li>
+                        <li>Fat: 25g</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mushroom Risotto Modal -->
+    <div id="risotto-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <img src="https://th.bing.com/th/id/OIP.nB2djsTo0jPP0xBXQBjrcQHaHa?rs=1&pid=ImgDetMain" alt="Mushroom Risotto" class="modal-img">
+                <h2 class="modal-title">Mushroom Risotto</h2>
+            </div>
+            <div class="modal-body">
+                <div class="recipe-instructions">
+                    <div class="recipe-info">
+                        <div class="info-item">
+                            <span>⏱️</span>
+                            <span>40 mins</span>
+                        </div>
+                        <div class="info-item">
+                            <span>🍽️</span>
+                            <span>4 servings</span>
+                        </div>
+                        <div class="info-item">
+                            <span>⭐</span>
+                            <span>Difficulty: Medium</span>
+                        </div>
+                    </div>
+                    <h3>Instructions</h3>
+                    <ol>
+                        <li>Heat broth in a saucepan and keep warm over low heat.</li>
+                        <li>In a large skillet, heat 2 tbsp butter and olive oil over medium heat. Add mushrooms and cook until golden, about 5 minutes. Remove and set aside.</li>
+                        <li>In same skillet, add remaining butter and onion. Cook until soft, about 3 minutes. Add garlic and cook 1 minute until fragrant.</li>
+                        <li>Add rice and stir to coat with butter. Cook 1-2 minutes until rice is translucent around edges.</li>
+                        <li>Add wine and cook, stirring, until absorbed.</li>
+                        <li>Add warm broth 1/2 cup at a time, stirring frequently and allowing liquid to absorb before adding more.</li>
+                        <li>After about 18 minutes, when rice is al dente and creamy, stir in mushrooms, Parmesan, and parsley.</li>
+                        <li>Season with salt and pepper. Serve immediately with extra Parmesan.</li>
+                    </ol>
+                    <h3>Chef's Tips</h3>
+                    <ul>
+                        <li>Use Arborio or Carnaroli rice for best results.</li>
+                        <li>For extra flavor, use a mix of wild mushrooms.</li>
+                        <li>Stir constantly for creamier risotto.</li>
+                        <li>Add a splash of cream at the end for extra richness.</li>
+                    </ul>
+                </div>
+                <div class="recipe-ingredients">
+                    <h3>Ingredients</h3>
+                    <ul>
+                        <li>6 cups chicken or vegetable broth</li>
+                        <li>4 tbsp butter, divided</li>
+                        <li>2 tbsp olive oil</li>
+                        <li>1 lb mushrooms (cremini, shiitake, or wild), sliced</li>
+                        <li>1 small onion, finely diced</li>
+                        <li>2 garlic cloves, minced</li>
+                        <li>1 1/2 cups Arborio rice</li>
+                        <li>1/2 cup dry white wine</li>
+                        <li>1/2 cup grated Parmesan cheese</li>
+                        <li>2 tbsp chopped parsley</li>
+                        <li>Salt and pepper to taste</li>
+                    </ul>
+                    <h3>Nutrition Info</h3>
+                    <p>Per serving:</p>
+                    <ul>
+                        <li>Calories: 450</li>
+                        <li>Carbs: 55g</li>
+                        <li>Protein: 12g</li>
+                        <li>Fat: 18g</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tiramisu Modal -->
+    <div id="tiramisu-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Tiramisu" class="modal-img">
+                <h2 class="modal-title">Tiramisu</h2>
+            </div>
+            <div class="modal-body">
+                <div class="recipe-instructions">
+                    <div class="recipe-info">
+                        <div class="info-item">
+                            <span>⏱️</span>
+                            <span>30 mins + chilling</span>
+                        </div>
+                        <div class="info-item">
+                            <span>🍽️</span>
+                            <span>8 servings</span>
+                        </div>
+                        <div class="info-item">
+                            <span>⭐</span>
+                            <span>Difficulty: Medium</span>
+                        </div>
+                    </div>
+                    <h3>Instructions</h3>
+                    <ol>
+                        <li>Brew coffee and let cool to room temperature. Stir in coffee liqueur if using.</li>
+                        <li>In a large bowl, beat egg yolks and sugar with an electric mixer until thick and pale, about 5 minutes.</li>
+                        <li>Add mascarpone and beat until smooth.</li>
+                        <li>In another bowl, beat cream until stiff peaks form. Gently fold into mascarpone mixture.</li>
+                        <li>Quickly dip ladyfingers one at a time into coffee mixture (don't soak them) and arrange in a single layer in an 8x8 dish.</li>
+                        <li>Spread half the mascarpone cream over ladyfingers. Repeat with another layer of dipped ladyfingers and remaining cream.</li>
+                        <li>Cover and refrigerate at least 6 hours, preferably overnight.</li>
+                        <li>Before serving, dust with cocoa powder.</li>
+                    </ol>
+                    <h3>Chef's Tips</h3>
+                    <ul>
+                        <li>For alcohol-free version, omit liqueur and use strong coffee.</li>
+                        <li>Use fresh, high-quality mascarpone for best results.</li>
+                        <li>For extra decadence, add a layer of chocolate shavings between the layers.</li>
+                        <li>Make individual servings in glasses for an elegant presentation.</li>
+                    </ul>
+                </div>
+                <div class="recipe-ingredients">
+                    <h3>Ingredients</h3>
+                    <ul>
+                        <li>1 1/2 cups strong brewed coffee, cooled</li>
+                        <li>2 tbsp coffee liqueur (optional)</li>
+                        <li>4 large egg yolks</li>
+                        <li>1/2 cup sugar</li>
+                        <li>16 oz mascarpone cheese</li>
+                        <li>1 cup heavy cream</li>
+                        <li>24 ladyfinger cookies</li>
+                        <li>Cocoa powder for dusting</li>
+                    </ul>
+                    <h3>Nutrition Info</h3>
+                    <p>Per serving:</p>
+                    <ul>
+                        <li>Calories: 420</li>
+                        <li>Carbs: 28g</li>
+                        <li>Protein: 7g</li>
+                        <li>Fat: 32g</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grilled Salmon Modal -->
+    <div id="salmon-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <img src="https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Grilled Salmon" class="modal-img">
+                <h2 class="modal-title">Grilled Salmon</h2>
+            </div>
+            <div class="modal-body">
+                <div class="recipe-instructions">
+                    <div class="recipe-info">
+                        <div class="info-item">
+                            <span>⏱️</span>
+                            <span>20 mins</span>
+                        </div>
+                        <div class="info-item">
+                            <span>🍽️</span>
+                            <span>2 servings</span>
+                        </div>
+                        <div class="info-item">
+                            <span>⭐</span>
+                            <span>Difficulty: Easy</span>
+                        </div>
+                    </div>
+                    <h3>Instructions</h3>
+                    <ol>
+                        <li>Preheat grill to medium-high heat (about 400°F).</li>
+                        <li>In a small bowl, whisk together olive oil, lemon juice, garlic, dill, salt, and pepper.</li>
+                        <li>Brush salmon fillets with the marinade on both sides.</li>
+                        <li>Lightly oil grill grates. Place salmon skin-side down on the grill.</li>
+                        <li>Grill for 4-5 minutes per side (for 1-inch thick fillets), or until salmon flakes easily with a fork.</li>
+                        <li>Remove from grill and let rest for 2 minutes before serving.</li>
+                        <li>Garnish with lemon wedges and fresh dill.</li>
+                    </ol>
+                    <h3>Chef's Tips</h3>
+                    <ul>
+                        <li>For best results, use salmon fillets of even thickness.</li>
+                        <li>If using skinless fillets, grill on a piece of foil to prevent sticking.</li>
+                        <li>For extra flavor, add a teaspoon of honey or maple syrup to the marinade.</li>
+                        <li>Salmon can also be baked at 400°F for 12-15 minutes if you don't have a grill.</li>
+                    </ul>
+                </div>
+                <div class="recipe-ingredients">
+                    <h3>Ingredients</h3>
+                    <ul>
+                        <li>2 salmon fillets (6-8 oz each)</li>
+                        <li>2 tbsp olive oil</li>
+                        <li>1 tbsp lemon juice</li>
+                        <li>1 garlic clove, minced</li>
+                        <li>1 tsp chopped fresh dill</li>
+                        <li>1/2 tsp salt</li>
+                        <li>1/4 tsp black pepper</li>
+                        <li>Lemon wedges for serving</li>
+                    </ul>
+                    <h3>Nutrition Info</h3>
+                    <p>Per serving:</p>
+                    <ul>
+                        <li>Calories: 350</li>
+                        <li>Carbs: 1g</li>
+                        <li>Protein: 34g</li>
+                        <li>Fat: 22g</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shrimp Scampi Modal -->
+    <div id="shrimp-scampi-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <img src="https://img.freepik.com/premium-photo/irresistible-shrimp-scampi-bliss-isolated-transparent-background_1002329-5292.jpg" alt="Shrimp Scampi" class="modal-img">
+                <h2 class="modal-title">Shrimp Scampi</h2>
+            </div>
+            <div class="modal-body">
+                <div class="recipe-instructions">
+                    <div class="recipe-info">
+                        <div class="info-item">
+                            <span>⏱️</span>
+                            <span>25 mins</span>
+                        </div>
+                        <div class="info-item">
+                            <span>🍽️</span>
+                            <span>4 servings</span>
+                        </div>
+                        <div class="info-item">
+                            <span>⭐</span>
+                            <span>Difficulty: Easy</span>
+                        </div>
+                    </div>
+                    <h3>Instructions</h3>
+                    <ol>
+                        <li>Cook pasta according to package directions. Drain, reserving 1/2 cup pasta water.</li>
+                        <li>While pasta cooks, heat olive oil and 2 tbsp butter in a large skillet over medium-high heat.</li>
+                        <li>Add shrimp and cook 1-2 minutes per side until pink. Remove and set aside.</li>
+                        <li>In same skillet, add remaining butter, garlic, and red pepper flakes. Cook 1 minute until fragrant.</li>
+                        <li>Add wine and lemon juice. Simmer 2 minutes.</li>
+                        <li>Return shrimp to skillet along with cooked pasta. Toss to combine, adding pasta water as needed to create a light sauce.</li>
+                        <li>Stir in parsley and season with salt and pepper.</li>
+                        <li>Serve immediately with lemon wedges and extra Parmesan if desired.</li>
+                    </ol>
+                    <h3>Chef's Tips</h3>
+                    <ul>
+                        <li>Use large or jumbo shrimp for best results.</li>
+                        <li>For extra richness, stir in 1/4 cup heavy cream at the end.</li>
+                        <li>Make it gluten-free by using gluten-free pasta.</li>
+                        <li>Add vegetables like spinach or cherry tomatoes with the garlic for extra nutrition.</li>
+                    </ul>
+                </div>
+                <div class="recipe-ingredients">
+                    <h3>Ingredients</h3>
+                    <ul>
+                        <li>12 oz linguine or spaghetti</li>
+                        <li>1 1/2 lbs large shrimp, peeled and deveined</li>
+                        <li>3 tbsp olive oil</li>
+                        <li>4 tbsp butter, divided</li>
+                        <li>4 garlic cloves, minced</li>
+                        <li>1/4 tsp red pepper flakes</li>
+                        <li>1/2 cup dry white wine</li>
+                        <li>2 tbsp lemon juice</li>
+                        <li>1/4 cup chopped parsley</li>
+                        <li>Salt and pepper to taste</li>
+                        <li>Lemon wedges for serving</li>
+                        <li>Grated Parmesan (optional)</li>
+                    </ul>
+                    <h3>Nutrition Info</h3>
+                    <p>Per serving:</p>
+                    <ul>
+                        <li>Calories: 520</li>
+                        <li>Carbs: 45g</li>
+                        <li>Protein: 35g</li>
+                        <li>Fat: 20g</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook-f">f</i></a>
+                <a href="#"><i class="fab fa-twitter">t</i></a>
+                <a href="#"><i class="fab fa-instagram">i</i></a>
+                <a href="#"><i class="fab fa-pinterest">p</i></a>
+            </div>
+            <p class="copyright">&copy; 2025 Foodies. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile navigation toggle
+        const navToggle = document.querySelector('.nav-toggle');
+        const nav = document.querySelector('nav');
+        
+        navToggle.addEventListener('click', () => {
+            nav.classList.toggle('active');
+        });
+        
+        // Close mobile menu when clicking on a link
+        const navLinks = document.querySelectorAll('nav a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                nav.classList.remove('active');
+            });
+        });
+        
+        // Category filtering
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        const recipeCards = document.querySelectorAll('.recipe-card');
+        
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons
+                categoryBtns.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                btn.classList.add('active');
+                
+                const category = btn.dataset.category;
+                
+                // Filter recipes
+                recipeCards.forEach(card => {
+                    if (category === 'all' || card.dataset.category === category) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        // Recipe modal functionality
+        const modals = document.querySelectorAll('.modal');
+        const closeBtns = document.querySelectorAll('.close-modal');
+        
+        // Open modal when recipe card is clicked
+        recipeCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const recipeId = card.dataset.recipe;
+                const modal = document.getElementById(`${recipeId}-modal`);
+                if (modal) {
+                    modal.style.display = 'block';
+                    document.body.style.overflow = 'hidden'; // Prevent scrolling
+                }
+            });
+        });
+        
+        // Close modal when X is clicked
+        closeBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.closest('.modal').style.display = 'none';
+                document.body.style.overflow = 'auto'; // Re-enable scrolling
+            });
+        });
+        
+        // Close modal when clicking outside content
+        window.addEventListener('click', (e) => {
+            modals.forEach(modal => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 70,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+
+<!-- Ad Window -->
+<div class="ad-container" id="popupAd" style="position:fixed;bottom:20px;right:20px;max-width:300px;background:white;border-radius:12px;box-shadow:0 5px 15px rgba(0,0,0,0.1);z-index:1000;overflow:hidden;transition:all 0.3s ease;display:none;">
+    <div style="background:#ff6f61;color:white;padding:10px 15px;font-weight:bold;display:flex;justify-content:space-between;align-items:center;">
+      <span>Recommended</span>
+      <button onclick="closeAd()" style="background:none;border:none;color:white;font-size:20px;cursor:pointer;">×</button>
+    </div>
+    <div style="padding:15px;display:grid;grid-template-rows:auto auto auto;gap:10px;">
+      <img src="Foodiess Recipe book Image .png">
+      <div style="font-size:14px;line-height:1.4;">The best recipes you can find all in one book. Grab yours NOW.</div>
+      <a href="#" style="display:block;background:#ff6f61;color:white;text-align:center;padding:8px;border-radius:6px;text-decoration:none;font-weight:bold;margin-top:auto;">Buy Now</a>
+    </div>
+  </div>
+  
+  
+  <script>
+  // Same script as index.html
+  function initAd() {
+    const ad = document.getElementById('popupAd');
+    const img = ad.querySelector('img');
+    
+    img.onload = function() {
+      const ratio = img.naturalHeight / img.naturalWidth;
+      const width = Math.min(300, img.naturalWidth);
+      const height = width * ratio;
+      
+      ad.style.width = width + 'px';
+      img.style.height = height + 'px';
+      setTimeout(() => ad.style.display = 'block', 8000);
+    };
+    
+    setTimeout(() => { if(ad.style.display === 'none') ad.style.display = 'block' }, 10000);
+  }
+  
+  function closeAd() {
+    const ad = document.getElementById('popupAd');
+    ad.style.transform = 'translateY(100px)';
+    setTimeout(() => ad.remove(), 300);
+  }
+  
+  document.addEventListener('DOMContentLoaded', initAd);
+  </script>
+
+
+
+</body>
+</html>
