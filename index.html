@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foodies - Your Ultimate Recipe Destination</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding-top: 70px;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 {
+            color: #ff6f61;
+            margin-top: 0;
+        }
+
+        a {
+            color: #ff6f61;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #ff4a3d;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ff6f61;
+            color: white;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .logo a {
+            color: white;
+        }
+
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a {
+            color: white;
+            font-size: 16px;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80') no-repeat center center/cover;
+            color: white;
+            text-align: center;
+            padding: 120px 5%;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h2 {
+            font-size: clamp(32px, 5vw, 48px);
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero p {
+            font-size: clamp(18px, 3vw, 24px);
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #ffa600;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            background-color: #e69500;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Sections */
+        .section {
+            padding: 60px 5%;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: clamp(28px, 4vw, 36px);
+            margin-bottom: 40px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: #ff6f61;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 20px;
+            text-align: left;
+        }
+
+        .card-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #ff6f61;
+        }
+
+        .card-desc {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
+
+        /* Community Section */
+        .community {
+            background-color: #fff5f5;
+        }
+
+        .community-grid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .community-card {
+            display: flex;
+            align-items: center;
+            text-align: left;
+            width: 100%;
+            max-width: 800px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .community-card img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 20px;
+            object-fit: cover;
+        }
+
+        .community-card h4 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .community-card p {
+            margin: 5px 0;
+            color: #333;
+        }
+
+        .timestamp {
+            font-size: 14px;
+            color: #888;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 30px 5%;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 20px;
+        }
+
+        .copyright {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Recipe Links */
+        .recipe-link {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+            }
+            
+            .nav-toggle {
+                display: block;
+            }
+            
+            nav {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: #ff6f61;
+                flex-direction: column;
+                align-items: center;
+                padding: 20px 0;
+                gap: 15px;
+                transform: translateY(-100%);
+                transition: transform 0.3s ease;
+                z-index: 999;
+            }
+            
+            nav.active {
+                transform: translateY(0);
+            }
+            
+            .hero {
+                padding: 100px 20px;
+            }
+            
+            .section {
+                padding: 50px 20px;
+            }
+            
+            .community-card {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .community-card img {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero {
+                padding: 80px 15px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 16px;
+            }
+            
+            .card {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <a href="index.html">Foodies</a>
+        </div>
+        <button class="nav-toggle" aria-label="toggle navigation">☰</button>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="recipes.html">Recipes</a>
+            <a href="community.html">Community         </a>
+            <a href="#">                      </a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Discover Culinary Delights</h2>
+            <p>Explore world-class recipes curated by professional chefs</p>
+            <a href="recipes.html" class="btn">Start Cooking</a>
+        </div>
+    </section>
+<!-- sidebar advertisement -->
+
+    <section id="featured" class="section featured-recipes">
+        <h3 class="section-title">Featured Recipes</h3>
+        <div class="grid">
+            <div class="card">
+                <a href="recipes.html#spaghetti-carbonara-modal" class="recipe-link">
+                    <img src="https://th.bing.com/th/id/OIP.7nUhUPkodnX8_JzYX5-5LQHaE7?rs=1&pid=ImgDetMain" alt="Spaghetti Carbonara" class="card-img">
+                    <div class="card-content">
+                        <h4 class="card-title">Spaghetti Carbonara</h4>
+                        <p class="card-desc">A classic Italian pasta dish with creamy sauce and bacon.</p>
+                    </div>
+                </a>
+            </div>
+            <div class="card">
+                <a href="recipes.html#kung-pao-chicken-modal" class="recipe-link">
+                    <img src="https://th.bing.com/th/id/OIP.8XunesCJXhNlxB3DIKcGpAHaE8?rs=1&pid=ImgDetMain" alt="Chicken Tikka Masala" class="card-img">
+                    <div class="card-content">
+                        <h4 class="card-title">Chicken Tikka Masala</h4>
+                        <p class="card-desc">A flavorful Indian dish with grilled chicken in a spicy sauce.</p>
+                    </div>
+                </a>
+            </div>
+            <div class="card">
+                <a href="recipes.html#tiramisu-modal" class="recipe-link">
+                    <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Chocolate Lava Cake" class="card-img">
+                    <div class="card-content">
+                        <h4 class="card-title">Chocolate Lava Cake</h4>
+                        <p class="card-desc">A decadent dessert with a gooey chocolate center.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section popular-categories">
+        <h3 class="section-title">Popular Categories</h3>
+        <div class="grid">
+            <div class="card">
+                <a href="recipes.html#caesar-salad-modal" class="recipe-link">
+                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Vegetarian" class="card-img">
+                    <div class="card-content">
+                        <h4 class="card-title">Vegetarian</h4>
+                        <p class="card-desc">Explore delicious vegetarian recipes.</p>
+                    </div>
+                </a>
+            </div>
+            <div class="card">
+                <a href="recipes.html#tiramisu-modal" class="recipe-link">
+                    <img src="https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Desserts" class="card-img">
+                    <div class="card-content">
+                        <h4 class="card-title">Desserts</h4>
+                        <p class="card-desc">Indulge in sweet treats and desserts.</p>
+                    </div>
+                </a>
+            </div>
+            <div class="card">
+                <a href="recipes.html#avocado-toast-modal" class="recipe-link">
+                    <img src="https://images.unsplash.com/photo-1493770348161-369560ae357d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Quick & Easy" class="card-img">
+                    <div class="card-content">
+                        <h4 class="card-title">Quick & Easy</h4>
+                        <p class="card-desc">Quick and easy recipes for busy days.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="community" class="section community">
+        <h3 class="section-title">Community</h3>
+        <div class="community-grid">
+            <div class="community-card">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="User 1">
+                <div>
+                    <h4>John Doe</h4>
+                    <p>"The recipes on Foodies are amazing! I tried the Spaghetti Carbonara and it was delicious."</p>
+                    <p class="timestamp">2 hours ago</p>
+                </div>
+            </div>
+            <div class="community-card">
+                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="User 2">
+                <div>
+                    <h4>Jane Smith</h4>
+                    <p>"I love the variety of recipes available. The Chocolate Lava Cake is my favorite!"</p>
+                    <p class="timestamp">5 hours ago</p>
+                </div>
+            </div>
+            <div class="community-card">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="User 3">
+                <div>
+                    <h4>Mike Johnson</h4>
+                    <p>"Foodies has become my go-to site for finding new and exciting recipes."</p>
+                    <p class="timestamp">1 day ago</p>
+                </div>
+            </div>
+        </div>
+        <a href="login.html" class="btn" style="margin-top: 30px; display: inline-block; text-decoration: none;">Join the Community</a>
+    </section>
+
+    <section class="section latest-recipes">
+        <h3 class="section-title">Latest Recipes</h3>
+        <div class="grid">
+            <div class="card">
+                <a href="recipes.html#beef-stroganoff-modal" class="recipe-link">
+                    <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Beef Stroganoff" class="card-img">
+                    <div class="card-content">
+                        <h4 class="card-title">Beef Stroganoff</h4>
+                        <p class="card-desc">A rich and creamy Russian dish with tender beef and mushrooms.</p>
+                    </div>
+                </a>
+            </div>
+            <div class="card">
+                <a href="recipes.html#caesar-salad-modal" class="recipe-link">
+                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Vegetable Stir Fry" class="card-img">
+                    <div class="card-content">
+                        <h4 class="card-title">Vegetable Stir Fry</h4>
+                        <p class="card-desc">A healthy and colorful stir fry with fresh vegetables.</p>
+                    </div>
+                </a>
+            </div>
+            <div class="card">
+                <a href="recipes.html#pancakes-modal" class="recipe-link">
+                    <img src="https://images.unsplash.com/photo-1606787366850-de6330128bfc?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Banana Bread" class="card-img">
+                    <div class="card-content">
+                        <h4 class="card-title">Banana Bread</h4>
+                        <p class="card-desc">A moist and flavorful banana bread perfect for breakfast or snack.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook-f">f</i></a>
+                <a href="#"><i class="fab fa-twitter">t</i></a>
+                <a href="#"><i class="fab fa-instagram">i</i></a>
+                <a href="#"><i class="fab fa-pinterest">p</i></a>
+            </div>
+            <p class="copyright">&copy; 2025 Foodies. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile navigation toggle
+        const navToggle = document.querySelector('.nav-toggle');
+        const nav = document.querySelector('nav');
+        
+        navToggle.addEventListener('click', () => {
+            nav.classList.toggle('active');
+        });
+        
+        // Close mobile menu when clicking on a link
+        const navLinks = document.querySelectorAll('nav a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                nav.classList.remove('active');
+            });
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 70,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+
+<!-- Ad Window -->
+<div class="ad-container" id="popupAd" style="position:fixed;bottom:20px;right:20px;max-width:300px;background:white;border-radius:12px;box-shadow:0 5px 15px rgba(0,0,0,0.1);z-index:1000;overflow:hidden;transition:all 0.3s ease;display:none;">
+    <div style="background:#ff6f61;color:white;padding:10px 15px;font-weight:bold;display:flex;justify-content:space-between;align-items:center;">
+      <span>Foodies Partner</span>
+      <button onclick="closeAd()" style="background:none;border:none;color:white;font-size:20px;cursor:pointer;">×</button>
+    </div>
+    <div style="padding:15px;display:grid;grid-template-rows:auto auto auto;gap:10px;">
+      <img src="Upgrade you kitchen Image.png">
+      <div style="font-size:14px;line-height:1.4;">Upgrade your kitchen with chef-approved 
+        tools. Exclusive 50% off for Foodies members!</div>
+      <a href="#" style="display:block;background:#ff6f61;color:white;text-align:center;padding:8px;border-radius:6px;text-decoration:none;font-weight:bold;margin-top:auto;">Shop Now</a>
+    </div>
+  </div>
+  
+  <script>
+  // Auto-size and show ad
+  function initAd() {
+    const ad = document.getElementById('popupAd');
+    const img = ad.querySelector('img');
+    
+    img.onload = function() {
+      const ratio = img.naturalHeight / img.naturalWidth;
+      const width = Math.min(300, img.naturalWidth);
+      const height = width * ratio;
+      
+      ad.style.width = width + 'px';
+      img.style.height = height + 'px';
+      setTimeout(() => ad.style.display = 'block', 8000);
+    };
+    
+    // Fallback if image fails to load
+    setTimeout(() => { if(ad.style.display === 'none') ad.style.display = 'block' }, 10000);
+  }
+  
+  function closeAd() {
+    const ad = document.getElementById('popupAd');
+    ad.style.transform = 'translateY(100px)';
+    setTimeout(() => ad.remove(), 300);
+  }
+  
+  document.addEventListener('DOMContentLoaded', initAd);
+  </script>
+
+</body>
+</html>
